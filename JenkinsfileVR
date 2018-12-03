@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+    stages {
+        stage('Checkout') {
+            steps {
+                slackSend(color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}] ${STAGE_NAME}' (${env.BUILD_URL})")
+                git branch: 'develop', credentialsId: 'CTC-NEW', url: 'git@gitpct.epam.com:ctco-mdat/auto.git'
+            }
+        }
+        stage('FindBugs') {
+            steps {
+                script {
+                    slackSend(color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}] ${STAGE_NAME}' (${env.BUILD_URL})")
+                    sh 'bash ./gradlew clean findBugsMain pmdMain'
+                    findbugs([canComputeNew: false, defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', pattern: 'build/reports/findbugs/main.xml', unHealthy: ''])
+                    pmd([canComputeNew: false, defaultEncoding: '', ealthy: '', pattern: 'build/reports/pmd/main.xml', unHealthy: ''])
+                }
+            }
+        }
+        stage('TESTS') {
+            steps {
+                slackSend(color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}] ${STAGE_NAME}' (${env.BUILD_URL})")
+                script {
+                    try {
+                        sh 'bash ./gradlew -i --continue runFrontendTests -DremoteDriverName=internetexplorer -DhubURL=http://10.8.0.1:5555/wd/hub'
+                    } finally {
+                        allure([includeProperties: false, jdk: '', results: [[path: 'build/allure-results']]])
+                    }
+                }
+            }
+        }
+        stage('Mail_Results') {
+            steps {
+                emailext body: '''$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS:
+						Check console output at $BUILD_URL to view the results.''',
+                        subject: '$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!',
+                        to: 'ihor_petruniv@epam.com'
+            }
+        }
+    }
+    post {
+        success {
+            slackSend(color: '#00FF00', message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+        }
+
+        failure {
+            slackSend(color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+        }
+    }
+}
