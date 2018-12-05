@@ -22,7 +22,7 @@ pipeline {
                 slackSend(color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}] ${STAGE_NAME}' (${env.BUILD_URL})")
                 script {
                     try {
-                        sh 'bash ./gradlew -i --continue -PmaxParallelForks=2 -PforkEvery=25 --max-workers=2 --parallel ${gradleTask} -DremoteDriverName=internetexplorer -DhubURL=http://127.0.0.1:5555/wd/hub'
+                        sh 'bash ./gradlew -i --continue -PmaxParallelForks=2 -PforkEvery=10 ${gradleTask} -DremoteDriverName=internetexplorer -DhubURL=http://127.0.0.1:5555/wd/hub'
                     } finally {
                         allure([includeProperties: false, jdk: '', results: [[path: 'build/allure-results']]])
                     }
