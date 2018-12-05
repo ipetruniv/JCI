@@ -1,6 +1,8 @@
 pipeline {
     agent any
     stages {
+	parallel {
+	parallel {
         stage('Checkout') {
             steps {
                 slackSend(color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}] ${STAGE_NAME}' (${env.BUILD_URL})")
@@ -17,6 +19,7 @@ pipeline {
                 }
             }
         }
+	}
         stage('TESTS') {
             steps {
                 slackSend(color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}] ${STAGE_NAME}' (${env.BUILD_URL})")
@@ -29,6 +32,7 @@ pipeline {
                 }
             }
         }
+	}
         stage('Mail_Results') {
             steps {
                 emailext body: '''$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS:
