@@ -19,10 +19,10 @@ pipeline {
         }
         stage('TESTS') {
             steps {
-                slackSend(color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}] ${STAGE_NAME}' (${env.BUILD_URL})")
+                slackSend(color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}] ${STAGE_NAME} Gradle task: ${gradleTask}' (${env.BUILD_URL})")
                 script {
                     try {
-                        sh 'bash ./gradlew -i --continue runFrontendTests -DremoteDriverName=internetexplorer -DhubURL=http://ecsa004006a4.epam.com:4444/wd/hub'
+                        sh 'bash ./gradlew -i --continue ${gradleTask} -DremoteDriverName=internetexplorer -DhubURL=http://ecsa004006a4.epam.com:4444/wd/hub'
                     } finally {
                         allure([includeProperties: false, jdk: '', results: [[path: 'build/allure-results']]])
                     }
