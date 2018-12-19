@@ -6,11 +6,11 @@ failscount=0
 failsmax=4
 
 function checksite() {
-	echo "Checking status of $url"
+	#echo "Checking status of $url"
 	for (( i=1; i<=$attempts; i++ ))
 	do
 	  code=`curl -sL --connect-timeout 20 --max-time 30 -w "%{http_code}\\n" "$url" -o /dev/null`
-	  echo "Found code $code for $url"
+	  #echo "Found code $code for $url"
 
 	  if [ "$code" = "200" ]; then
 	    echo "Website $url is online."
@@ -46,9 +46,6 @@ checksite
 url='http://stepmdmqa.labcorp.ad.ctc/webui/CTRProductSourcingPortal'
 checksite
 
-echo "Checking Data Vault Supplier Portal"
-url='http://stepmdmqa/webui/'
-checksite
 
 echo "$online $failscount"
 
