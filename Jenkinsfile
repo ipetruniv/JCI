@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { node { label 'win2012' } }
     stages {
         stage('Checkout') {
             steps {
@@ -11,7 +11,7 @@ pipeline {
             steps {
                 script {
                     slackSend(color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}] ${STAGE_NAME}' (${env.BUILD_URL})")
-                    sh 'bash ./gradlew clean findBugsMain pmdMain'
+                    bat 'gradlew clean findBugsMain pmdMain'
                     findbugs([canComputeNew: false, defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', pattern: 'build/reports/findbugs/main.xml', unHealthy: ''])
                     pmd([canComputeNew: false, defaultEncoding: '', ealthy: '', pattern: 'build/reports/pmd/main.xml', unHealthy: ''])
                 }
@@ -22,7 +22,7 @@ pipeline {
                 slackSend(color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}] ${STAGE_NAME} Gradle task: ${gradleTask}' (${env.BUILD_URL})")
                 script {
                     try {
-                        sh 'bash ./gradlew -i --continue ${gradleTask} -DremoteDriverName=internetexplorer -DhubURL=http://ecsa004006a4.epam.com:4444/wd/hub'
+                        bat 'gradlew -i --continue ${gradleTask}'
                     } finally {
                         allure([includeProperties: false, jdk: '', results: [[path: 'build/allure-results']]])
                     }
