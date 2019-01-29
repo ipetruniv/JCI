@@ -1,5 +1,5 @@
 pipeline {
-    agent { node { label 'win2012' } }
+    agent { node { label 'ipetruniv' } }
     stages {
         stage('Checkout') {
             steps {
