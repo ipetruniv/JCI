@@ -1,0 +1,32 @@
+pipeline {
+    agent { node { label 'P5CPAJ00001JKWS ' } }
+    stages {
+        stage('FindBugs') {
+            steps {
+                script {
+                    bat 'echo %JAVA_HOME%'
+					bat 'echo %JDK_HOME%'
+					bat 'setx -m HOME "e:\\jenkins"'
+					bat 'setx -m HOMEDRIVE "e:\\jenkins"'
+					bat 'setx -m HOMEPATH "e:\\jenkins"'
+					bat 'set HOMEDRIVE=e:\\'
+					bat 'set HOMEPATH=jenkins'
+					bat 'set HOME=e:\\jenkins'
+					bat 'dir'
+					bat 'set'
+					bat 'dir e:\\jenkins'
+					bat 'dir e:\\jenkins\\tools'
+					bat 'dir e:\\jenkins\\tools\\hudson.model.JDK'
+					bat 'echo %HOMEDRIVE%'
+					bat 'echo %HOMEPATH%'
+					bat 'echo %HOME%'
+					bat 'c: & cd \\ & dir java.exe /s'
+					bat 'java --version'					
+					bat 'dir "C://Program Files (x86)"'
+					bat 'dir "C:/Program Files"'
+                }
+            }
+        }
+
+    }
+}
