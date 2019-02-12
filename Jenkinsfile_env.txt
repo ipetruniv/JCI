@@ -21,6 +21,7 @@ pipeline {
 					bat 'echo %HOMEPATH%'
 					bat 'echo %HOME%'
 					bat 'c: & cd \\ & dir java.exe /s'
+					bat 'e: & cd \\ & dir java.exe /s'
 					bat 'java --version'					
 					bat 'dir "C:\\Program Files (x86)"'
 					bat 'dir "C:\\Program Files"'
