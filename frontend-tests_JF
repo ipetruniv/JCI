@@ -1,0 +1,36 @@
+pipeline {
+    agent { node { label 'windows'} }
+    stages {
+        //agent { node { label "${params.Node_Name}"} }
+        stage('Checkout') {
+			input {
+				message "Set branch"
+                ok "Done"
+                submitter "YYY"
+                parameters {
+                            string(name: 'branch',
+                            defaultValue: 'develop', 
+                            description: 'Set branch')
+                }
+		    }
+            steps {
+                git branch: "${branch}", credentialsId: 'bitbucket.corp.ad.ctc', url: 'ssh://git@bitbucket.corp.ad.ctc:22/mdmdevops/auto.git'
+            }
+        }
+        stage('Run_Tests') {
+            tools {
+                gradle "Gradke 4.10.2"
+            }
+            steps {
+                script {
+                    try {
+                        bat 'gradle -i --continue runFrontendTests  -DhighLightMarker=off'
+                    } 
+                    finally {
+                        allure([includeProperties: false, jdk: '', results: [[path: 'build/allure-results']]])
+                    }
+                }
+            }
+        }
+    }
+}
