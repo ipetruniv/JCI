@@ -1,6 +1,5 @@
 pipeline {
   agent any
-  def rtGradle = Artifactory.newGradleBuild()
   parameters {
     choice (
       name: 'node',
@@ -17,6 +16,7 @@ pipeline {
           }
 
           stage('Build') {
+            def rtGradle = Artifactory.newGradleBuild()
             rtGradle.tool = "Gradke 4.10.2"
             steps {
               rtGradle.run buildFile: 'build.gradle', tasks: '-i --continue -Dhost=test3 -Dbrowser=chrome runAllFglTests -DhighLightMarker=off'
